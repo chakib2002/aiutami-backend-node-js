@@ -11,7 +11,8 @@ const Provinces = sequelize.define('Provinces',{
         allowNull : false,
     }
 },{
-    freezeTableName : true
+    freezeTableName : true,
+    timestamps : false
 })
 
 const User = sequelize.define('Users',{
@@ -51,10 +52,6 @@ const User = sequelize.define('Users',{
         type:Sequelize.DataTypes.STRING,
         allowNull: false
     },
-    province : {
-        type:Sequelize.DataTypes.STRING,
-        allowNull: false
-    },
     about_me : {
         type : Sequelize.DataTypes.STRING,
         allowNull: false
@@ -64,8 +61,33 @@ const User = sequelize.define('Users',{
         allowNull : false
     }
 },{
-    freezeTableName :true
+    freezeTableName :true,
+    timestamps : false
 })
+
+Provinces.hasMany(User
+, {
+    foreignKey: {
+        name :'province',
+        type : Sequelize.DataTypes.STRING,
+        allowNull : false,
+        onDelete : 'cascade',
+        onUpdate : 'cascade'
+    }
+}
+)
+User.belongsTo(Provinces
+, {
+    foreignKey: {
+        name :'province',
+        type : Sequelize.DataTypes.STRING,
+        allowNull : false,
+        onDelete : 'cascade',
+        onUpdate : 'cascade'
+    }
+}
+)
+
 
 const Jobs = sequelize.define('Jobs',{
     id :{
@@ -75,10 +97,10 @@ const Jobs = sequelize.define('Jobs',{
         unique : true,
         allowNull : false
     },
-    id_user : {
-        type : Sequelize.DataTypes.INTEGER,
-        allowNull : false,
-    },
+    // id_user : {
+    //     type : Sequelize.DataTypes.INTEGER,
+    //     allowNull : false,
+    // },
     full_name : {
         type : Sequelize.DataTypes.STRING,
         allowNull : false
@@ -101,8 +123,30 @@ const Jobs = sequelize.define('Jobs',{
         allowNull : false
     }
 },{
-    freezeTableName : true
+    freezeTableName : true,
+    timestamps : false
 })
+
+User.hasMany(Jobs, {
+    foreignKey : {
+        name : 'id_user',
+        type : Sequelize.DataTypes.INTEGER,
+        allowNull : false,
+        onDelete :'cascade',
+        onUpdate :'cascade'
+    }
+})
+Jobs.belongsTo(User, {
+    foreignKey : {
+        name : 'id_user',
+        type : Sequelize.DataTypes.INTEGER,
+        allowNull : false,
+        onDelete :'cascade',
+        onUpdate :'cascade'
+    }
+})
+
+
 
 const Housekeeper = sequelize.define('Housekeepers',{
     id_user : {
@@ -120,7 +164,27 @@ const Housekeeper = sequelize.define('Housekeepers',{
         allowNull : true
     }
 },{
-    freezeTableName : true
+    freezeTableName : true,
+    timestamps : false
+})
+
+User.hasOne(Housekeeper ,{
+    foreignKey :{
+        name : 'id_user',
+        type : Sequelize.DataTypes.INTEGER,
+        allowNull: false,
+        unique : true,
+
+    }
+})
+Housekeeper.belongsTo(User, {
+    foreignKey :{
+        name : 'id_user',
+        type : Sequelize.DataTypes.INTEGER,
+        allowNull: false,
+        unique : true,
+
+    }
 })
 
 const Seniorcare = sequelize.define('Seniorcare',{
@@ -171,7 +235,27 @@ const Seniorcare = sequelize.define('Seniorcare',{
 
 
 },{
-    freezeTableName : true
+    freezeTableName : true,
+    timestamps : false
+})
+
+User.hasOne(Seniorcare ,{
+    foreignKey :{
+        name : 'id_user',
+        type : Sequelize.DataTypes.INTEGER,
+        allowNull: false,
+        unique : true,
+
+    }
+})
+Seniorcare.belongsTo(User, {
+    foreignKey :{
+        name : 'id_user',
+        type : Sequelize.DataTypes.INTEGER,
+        allowNull: false,
+        unique : true,
+
+    }
 })
 
 const Tutors = sequelize.define('Tutors',{
@@ -211,7 +295,27 @@ const Tutors = sequelize.define('Tutors',{
     
 
 },{
-    freezeTableName:true
+    freezeTableName:true,
+    timestamps : false
+})
+
+User.hasOne(Tutors ,{
+    foreignKey :{
+        name : 'id_user',
+        type : Sequelize.DataTypes.INTEGER,
+        allowNull: false,
+        unique : true,
+
+    }
+})
+Tutors.belongsTo(User, {
+    foreignKey :{
+        name : 'id_user',
+        type : Sequelize.DataTypes.INTEGER,
+        allowNull: false,
+        unique : true,
+
+    }
 })
 
 const Subjects = sequelize.define('Subjects', {
@@ -222,16 +326,33 @@ const Subjects = sequelize.define('Subjects', {
         unique : true,
         autoIncrement : true
     },
-    id_user : {
-        type : Sequelize.DataTypes.INTEGER,
-        allowNull: false
-    },
     subject : {
         type : Sequelize.DataTypes.STRING,
         allowNull : false
     }
 },{
-    freezeTableName : true
+    freezeTableName : true,
+    timestamps : false
 })
+
+Tutors.hasMany(Subjects, {
+    foreignKey : {
+        name : 'id_user',
+        type : Sequelize.DataTypes.INTEGER,
+        allowNull : false,
+        onDelete :'cascade',
+        onUpdate :'cascade'
+    }
+})
+Subjects.belongsTo(Tutors, {
+    foreignKey : {
+        name : 'id_user',
+        type : Sequelize.DataTypes.INTEGER,
+        allowNull : false,
+        onDelete :'cascade',
+        onUpdate :'cascade'
+    }
+})
+
 
 module.exports ={User, Provinces, Jobs, Housekeeper, Seniorcare, Tutors, Subjects}
