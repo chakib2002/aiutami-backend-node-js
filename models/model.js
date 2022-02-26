@@ -59,6 +59,14 @@ const User = sequelize.define('Users',{
     age : {
         type : Sequelize.DataTypes.INTEGER,
         allowNull : false
+    },
+    availability : {
+        type :  Sequelize.DataTypes.JSON,
+        allowNull : false,
+    },
+    price : {
+        type : Sequelize.DataTypes.INTEGER,
+        allowNull : true
     }
 },{
     freezeTableName :true,
@@ -97,10 +105,6 @@ const Jobs = sequelize.define('Jobs',{
         unique : true,
         allowNull : false
     },
-    // id_user : {
-    //     type : Sequelize.DataTypes.INTEGER,
-    //     allowNull : false,
-    // },
     full_name : {
         type : Sequelize.DataTypes.STRING,
         allowNull : false
@@ -155,14 +159,7 @@ const Housekeeper = sequelize.define('Housekeepers',{
         allowNull: false, 
         unique: true
     },
-    availability : {
-        type :  Sequelize.DataTypes.JSON,
-        allowNull : false,
-    },
-    price : {
-        type : Sequelize.DataTypes.INTEGER,
-        allowNull : true
-    }
+
 },{
     freezeTableName : true,
     timestamps : false
@@ -194,10 +191,6 @@ const Seniorcare = sequelize.define('Seniorcare',{
         allowNull: false, 
         unique: true
     },
-    availability : {
-        type : Sequelize.DataTypes.JSON,
-        allowNull : false
-    },
     transportation : {
         type : Sequelize.DataTypes.BOOLEAN,
         allowNull: false,
@@ -228,10 +221,7 @@ const Seniorcare = sequelize.define('Seniorcare',{
         allowNull : false, 
         defaultValue : false 
     }, 
-    price : {
-        type : Sequelize.DataTypes.INTEGER,
-        allowNull : false, 
-    }
+
 
 
 },{
@@ -284,14 +274,7 @@ const Tutors = sequelize.define('Tutors',{
         type : Sequelize.DataTypes.STRING,
         allowNull: false
     },
-    availability : {
-        type : Sequelize.DataTypes.JSON,
-        allowNull : false
-    },
-    price : {
-        type : Sequelize.DataTypes.INTEGER,
-        allowNull : false, 
-    }
+
     
 
 },{

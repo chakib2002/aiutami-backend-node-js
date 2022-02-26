@@ -1,6 +1,5 @@
 const express = require("express");
-const sequelize = require('./models/main')
-const {User, Subjects, Tutors, Seniorcare, Housekeeper, Provinces, Jobs}= require('./models/model');
+const public_routes = require('./routes/public')
 
 const app = express();
 
@@ -12,14 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to aiutami application." });
 });
-sequelize.authenticate().then(()=>console.log('db connected')).catch((err)=>console.log('db not connected !!!!'))
-Provinces.sync().then(()=>console.log("table created successfully")).catch((err)=>console.log('err'))
-User.sync().then(()=>console.log("table created successfully")).catch((err)=>console.log('err'))
-Jobs.sync().then(()=>console.log("table created successfully")).catch((err)=>console.log('err'))
-Housekeeper.sync().then(()=>console.log("table created successfully")).catch((err)=>console.log('err'))
-Seniorcare.sync().then(()=>console.log("table created successfully")).catch((err)=>console.log('err'))
-Tutors.sync().then(()=>console.log("table created successfully")).catch((err)=>console.log('err'))
-Subjects.sync().then(()=>console.log("table created successfully")).catch((err)=>console.log('err'))
+app.use(public_routes)
 // set port, listen for requests
 const PORT = 3001;
 app.listen(PORT, () => {
