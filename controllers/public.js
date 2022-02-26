@@ -1,3 +1,4 @@
+const res = require('express/lib/response');
 const db = require('../models/model');
 
 exports.fetch_seniorcare = (req, res)=>{
@@ -38,6 +39,24 @@ exports.fetch_seniorcare = (req, res)=>{
 })
 
 .catch((err)=>console.log(err))}
+
+exports.fetch_housekeeping = (req, res)=>{
+    const care_type = req.params.care_type.toString();
+    const location = req.params.location.toString();
+    db.User.sync().then(()=>{
+        return db.User.findAll({
+            attributes: {exclude: ['hash'] }, where: {
+                care_type: care_type,
+                province :  location,
+            }
+        })
+    })
+    .then((data)=> res.status(200).json(data))
+    .catch((err)=> {
+        res.status(500).json({"error" : "something went wrong please try again !"})
+        console.log(err)
+    })
+}
 
 
 
