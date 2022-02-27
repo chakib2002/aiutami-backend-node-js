@@ -58,5 +58,35 @@ exports.fetch_housekeeping = (req, res)=>{
     })
 }
 
+exports.fetch_tutoring = (req, res)=>{
+    const param = req.params ;
+    db.User.sync().then(()=>{
+        return db.User.findAll({
+            attributes: {exclude: ['hash'] }, where: {
+                care_type: param.care_type,
+                province :  param.location,
+            },
+            include : {
+                model : db.Tutors,
+                where : {
+                    level : param.level,
+                    schoolyear : param.schoolyear
+                },
+                include : {
+                    model : db.Subjects,
+                    where : {
+                        subject : param.subject
+                    }
+                }
+            },
+    
+        })
+    }).then((data)=>res.status(200).json(data))
+    .catch((err)=>{
+        res.status(500).json({"error" : "Something went wrong please try again !"})
+        console.log(err)
+    })
+}
+
 
 

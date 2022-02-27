@@ -255,21 +255,14 @@ const Tutors = sequelize.define('Tutors',{
         allowNull: false, 
         unique: true
     },
-    primary_school :  {
-        type : Sequelize.DataTypes.BOOLEAN,
-        allowNull : false, 
-        defaultValue : false 
-    }, 
-    middle_school :  {
-        type : Sequelize.DataTypes.BOOLEAN,
-        allowNull : false, 
-        defaultValue : false 
-    }, 
-    high_school :  {
-        type : Sequelize.DataTypes.BOOLEAN,
-        allowNull : false, 
-        defaultValue : false 
-    }, 
+   level : {
+       type: Sequelize.DataTypes.STRING,
+        allowNull : false
+   },
+   schoolyear : {
+        type : Sequelize.DataTypes.STRING,
+        allowNull : false
+   },
     education : {
         type : Sequelize.DataTypes.STRING,
         allowNull: false
