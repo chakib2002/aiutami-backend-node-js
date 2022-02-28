@@ -1,5 +1,6 @@
 const express = require("express");
-const public_routes = require('./routes/public')
+const public_routes = require('./routes/public');
+
 
 const app = express();
 
@@ -11,7 +12,8 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to aiutami application." });
 });
-app.use(public_routes)
+app.use(public_routes);
+
 // set port, listen for requests
 const PORT = 3001;
 app.listen(PORT, () => {
