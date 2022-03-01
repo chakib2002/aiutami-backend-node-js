@@ -1,34 +1,17 @@
+const  sequelize  = require('../models/main');
 const db = require('../models/model');
+const bcrypt = require ('bcrypt');
 
 
-const get_email = async(email)=>{
-    await db.User.sync().then(()=>{
-        return db.User.findOne({
-            attributes : ['Email'],
-            where : {
-                Email : email
-            }
-        })
-    })
-    .then((data)=> data? true : false )
-    .catch((err)=> {
-        throw err
-    })
+const get_email = async (email)=>{
+
 }
 
-const get_password = async(email)=>{
-    await db.User.sync().then(()=>{
-        return db.User.findOne({
-            attributes : ['hash'],
-            where : {
-                Email : email
-            }
-        })
-    }).then(data=>data.dataValues.hash)
-    .catch(err=>{
-        throw err
-    })
+const get_hash = async (email)=>{
+
 }
+
+
 
 const  userby_id= async(id)=>{
     await db.User.sync().then(()=>{
@@ -58,4 +41,11 @@ const  id_ofuser= async(Email)=>{
     })
 }
 
-module.exports={get_email, get_password, userby_id, id_ofuser}
+const add_user = (req, res, next )=>{
+
+}
+
+
+
+
+module.exports={get_email, get_hash, userby_id, id_ofuser, add_user}

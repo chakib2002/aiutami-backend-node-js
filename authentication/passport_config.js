@@ -11,12 +11,12 @@ passport.use(new LocalStrategy({
     passwordField : "pass"
 },
   async function(username,password, done) {
-    const user= await connection.get_email( username )
+    const user = await connection.get_email( username )
       function handle () {
       if (!user) {
         return done(null, false);
       }
-      connection.get_password(username).
+      connection.get_hash(username).
       then( (user)=>{
         bcrypt.compare(password, user)
         .then((result)=>{
@@ -33,9 +33,10 @@ passport.use(new LocalStrategy({
 ));
 
   passport.serializeUser((user, done) => {
-    connection.id_ofuser(user).then( (userId)=> {
-      done(null, userId);
-    }
+    connection.id_ofuser(user)
+      .then( (userId)=> {
+        done(null, userId);
+      }
 
     )
 
@@ -48,4 +49,4 @@ passport.deserializeUser((userId, done) => {
         })
       });
         
-module.exports=passport
+module.exports = passport

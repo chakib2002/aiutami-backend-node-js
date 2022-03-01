@@ -1,6 +1,6 @@
 const db = require('../models/model');
 
-exports.fetch_seniorcare = (req, res)=>{
+exports.fetch_seniorcare = async(req, res)=>{
     const care_type = req.params.care_type.toString();
     const location = req.params.location.toString();
     const params = req.params
@@ -14,7 +14,7 @@ exports.fetch_seniorcare = (req, res)=>{
         }
     }
 
-    db.User.sync().then(()=>{
+    await db.User.sync().then(()=>{
         return db.User.findAll({
             attributes: {exclude: ['hash'] }, where: {
                 care_type: care_type,
@@ -39,10 +39,10 @@ exports.fetch_seniorcare = (req, res)=>{
 
 .catch((err)=>console.log(err))}
 
-exports.fetch_housekeeping = (req, res)=>{
+exports.fetch_housekeeping = async (req, res)=>{
     const care_type = req.params.care_type.toString();
     const location = req.params.location.toString();
-    db.User.sync().then(()=>{
+    await db.User.sync().then(()=>{
         return db.User.findAll({
             attributes: {exclude: ['hash'] }, where: {
                 care_type: care_type,
@@ -57,9 +57,9 @@ exports.fetch_housekeeping = (req, res)=>{
     })
 }
 
-exports.fetch_tutoring = (req, res)=>{
+exports.fetch_tutoring = async(req, res)=>{
     const param = req.params ;
-    db.User.sync().then(()=>{
+    await db.User.sync().then(()=>{
         return db.User.findAll({
             attributes: {exclude: ['hash'] }, where: {
                 care_type: param.care_type,
