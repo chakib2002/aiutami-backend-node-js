@@ -1,10 +1,9 @@
 const session = require('express-session');
 const {sessionStore}= require('./db_session');
 const Passport = require('passport');
-const passport = require('./passport_config');
-const loginControllers = require('./login_controllers')
 const express = require('express');
 const app = express()
+const controllers = require('./controllers')
 
 
 const route = express.Router();
@@ -29,9 +28,7 @@ app.use((req,res,next) =>{
     next()
  })
 
-// create the login & the register routes 
-route.post('/register', loginControllers.add_user )
-
+route.post('/signup', controllers.add_user )
 
 
 module.exports = route ; 
