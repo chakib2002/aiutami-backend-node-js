@@ -267,6 +267,10 @@ const Tutors = sequelize.define('Tutors',{
         type : Sequelize.DataTypes.STRING,
         allowNull: false
     },
+    subject : {
+        type : Sequelize.DataTypes.STRING,
+        allowNull : false
+    }
 
     
 
@@ -294,41 +298,7 @@ Tutors.belongsTo(User, {
     }
 })
 
-const Subjects = sequelize.define('Subjects', {
-    id : {
-        type : Sequelize.DataTypes.INTEGER,
-        primaryKey : true,
-        allowNull: false,
-        unique : true,
-        autoIncrement : true
-    },
-    subject : {
-        type : Sequelize.DataTypes.STRING,
-        allowNull : false
-    }
-},{
-    freezeTableName : true,
-    timestamps : false
-})
-
-Tutors.hasMany(Subjects, {
-    foreignKey : {
-        name : 'id_user',
-        type : Sequelize.DataTypes.INTEGER,
-        allowNull : false,
-        onDelete :'cascade',
-        onUpdate :'cascade'
-    }
-})
-Subjects.belongsTo(Tutors, {
-    foreignKey : {
-        name : 'id_user',
-        type : Sequelize.DataTypes.INTEGER,
-        allowNull : false,
-        onDelete :'cascade',
-        onUpdate :'cascade'
-    }
-})
 
 
-module.exports ={User, Provinces, Jobs, Housekeeper, Seniorcare, Tutors, Subjects}
+
+module.exports ={User, Provinces, Jobs, Housekeeper, Seniorcare, Tutors}

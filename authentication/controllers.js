@@ -1,6 +1,5 @@
 const db = require('../models/model');
 const sequelize = require('../models/main');
-const Sequelize = require('sequelize')
 const bcrypt = require('bcrypt');
 
 
@@ -57,23 +56,14 @@ exports.add_user = async (req, res, next)=>{
             res.status(200).json({"message": "user signed up successfully ."})
            
             }else if (req.body.care_type =='tutor'){
-                const tutor = await db.Tutors.create({
+                await db.Tutors.create({
                         id_user : user.dataValues.id,
                         level : req.body.level,
                         schoolyear : req.body.schoolyear,
-                        education : req.body.education
+                        education : req.body.education,
+                        subject : req.body.subject
                     }, {transaction : tOne})
-                const array = req.body.subjects ;
-                tOne.afterCommit( ()=>{
-                    array.forEach((element) => {
-                        db.Subjects.create({
-                            id_user : tutor.dataValues.id_user,
-                            subject : element
-                        })
-                    });
-                })
-            res.status(200).json({"message": "user signed up successfully ."})
-
+                res.status(200).json({"message": "user signed up successfully ."})
             }else{
                 res.status(500).json({"message": "An error has occured please sign up again ."})
                 throw new Error()
@@ -86,3 +76,20 @@ exports.add_user = async (req, res, next)=>{
     }
 }
 
+exports.logout =  (req, res, next) => {
+    req.session.destroy(function (err) {
+        if (err){ 
+            throw err 
+        }else{
+            res.status(200).json({"message" :"You have logged out successfully ."});
+        }
+    });
+}
+
+exports.login = (req,res) =>{
+    if(req.session){
+        res.status(200).json({"message": "you have logged in successfully ."})
+    }else{
+        res.status(401).json({"message": "Email / password combination is wrong please login again ."})
+    }
+}
