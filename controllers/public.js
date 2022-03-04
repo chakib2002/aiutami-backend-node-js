@@ -1,3 +1,5 @@
+const { use } = require('passport/lib');
+const sequelize = require('../models/main');
 const db = require('../models/model');
 
 exports.fetch_seniorcare = async(req, res)=>{
@@ -44,7 +46,9 @@ exports.fetch_housekeeping = async (req, res)=>{
     const location = req.params.location.toString();
     await db.User.sync().then(()=>{
         return db.User.findAll({
-            attributes: {exclude: ['hash'] }, where: {
+            attributes: {
+                exclude: ['hash'] 
+            }, where: {
                 care_type: care_type,
                 province :  location,
             }
@@ -52,7 +56,7 @@ exports.fetch_housekeeping = async (req, res)=>{
     })
     .then((data)=> res.status(200).json(data))
     .catch((err)=> {
-        res.status(500).json({"error" : "something went wrong please try again !"})
+        res.status(500).json({"error" : "Something went wrong please try again !"})
         console.log(err)
     })
 }
@@ -69,23 +73,34 @@ exports.fetch_tutoring = async(req, res)=>{
                 model : db.Tutors,
                 where : {
                     level : param.level,
-                    schoolyear : param.schoolyear
-                },
-                include : {
-                    model : db.Subjects,
-                    where : {
-                        subject : param.subject
-                    }
+                    schoolyear : param.schoolyear,
+                    subject : param.subject
                 }
             },
     
         })
-    }).then((data)=>res.status(200).json(data))
+    })
+    .then((data)=>res.status(200).json(data))
     .catch((err)=>{
         res.status(500).json({"error" : "Something went wrong please try again !"})
         console.log(err)
     })
 }
 
+exports.client_request = async (req, res, next)=>{
+    await db.Jobs.sync().then(()=>{
+        return db.Jobs.create({
+            id_user : req.params.user_id,
+            full_name : req.body.full_name,
+            phone_number : req.body.phone_number,
+            location : req.body.location,
+            job_description : req.body.job_description,
+        })
+        .then(()=>res.status(200).json({"message":"request have been sent successfully ."}))
+        .catch(()=>res.status(500).json({"message": "an error has occured please send again the request ."}))
+
+    })
+
+}
 
 

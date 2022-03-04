@@ -7,4 +7,7 @@ route.get("/result/:care_type/:location/:transportation/:house_hold_tasks/:perso
 route.get("/result/:care_type/:location/:level/:schoolyear/:subject",controller.fetch_tutoring);//tutors
 route.get("/result/:care_type/:location/",controller.fetch_housekeeping); // housekeeper
 
+
+route.post("/result/:user_id", controller.client_request) // send a request to a specific caregiver or tutor .
+
 module.exports = route;
