@@ -1,11 +1,6 @@
 const sequelize = require('../models/main');
 const db = require('../models/model');
-const {createClient}= require('redis');
-
-const client = createClient();
-client.on('connect', () => console.log('Connected to Redis!'));
-client.on('error', (err) => console.log('Redis Client Error', err));
-client.connect();
+const client = require ('../redis/redis_config.js');
 
 
 exports.fetch_seniorcare = async(req, res)=>{
