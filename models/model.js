@@ -125,6 +125,11 @@ const Jobs = sequelize.define('Jobs',{
         type : Sequelize.DataTypes.DATE,
         defaultValue : Sequelize.DataTypes.NOW,
         allowNull : false
+    },
+    seen : {
+        type : Sequelize.DataTypes.BOOLEAN,
+        defaultValue : false,
+        allowNull : false
     }
 },{
     freezeTableName : true,

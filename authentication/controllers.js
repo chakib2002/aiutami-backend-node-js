@@ -88,6 +88,8 @@ exports.logout =  (req, res, next) => {
 
 exports.login = (req,res) =>{
     if(req.session){
+        // fetch all the job posted for the specific user who has signed in .
+        // and return them with count to the user .
         res.status(200).json({"message": "you have logged in successfully ."})
     }else{
         res.status(401).json({"message": "Email / password combination is wrong please login again ."})
