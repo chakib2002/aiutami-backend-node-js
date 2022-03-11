@@ -1,6 +1,11 @@
 const sequelize = require('../models/main');
 const db = require('../models/model');
-const {createClient}=require('redis');
+const {createClient}= require('redis');
+
+const client = createClient();
+client.on('connect', () => console.log('Connected to Redis!'));
+client.on('error', (err) => console.log('Redis Client Error', err));
+client.connect();
 
 
 exports.fetch_seniorcare = async(req, res)=>{
@@ -108,12 +113,6 @@ exports.client_request = async (req, res, next)=>{
             },{transaction : tThree})
             return await lastId + 1 
         }).then(async(id) =>{
-            
-                const client = createClient();
-              
-                client.on('error', (err) => console.log('Redis Client Error', err));
-              
-                await client.connect();
                 await client.sendCommand(['HMSET','user-'+req.params.user_id ,
                  'id', id ,
                  'user_id', req.params.user_id,
@@ -121,8 +120,7 @@ exports.client_request = async (req, res, next)=>{
                  'phone_number',req.body.phone_number,
                  'location',req.body.location,
                  'job_description', req.body.job_description
-                ]);
-
+                ])
             }).then(()=>{
                 res.status(200).json({"message":"request has been sent successfully ."})
             })
