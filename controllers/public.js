@@ -108,7 +108,8 @@ exports.client_request = async (req, res, next)=>{
             },{transaction : tThree})
             return await lastId + 1 
         }).then(async(id) =>{
-                await client.sendCommand(['HMSET','user-'+req.params.user_id ,
+                await client.sendCommand(['XADD','user-'+req.params.user_id ,
+                 '*',
                  'id', id ,
                  'user_id', req.params.user_id,
                  'full_name', req.body.full_name,
