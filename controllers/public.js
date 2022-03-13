@@ -88,43 +88,58 @@ exports.fetch_tutoring = async(req, res)=>{
     })
 }
 
-exports.client_request = async (req, res, next)=>{
-    try {
-        await sequelize.transaction(async (tThree)=>{
-           const counter =  await db.Jobs.findAll({
-               attributes :["id"],
-               order : [["id", "desc"]],
-               limit :1
-            }, {transaction : tThree} )
+
+
+exports.client_request = async (req, res, next)=>
+    new Promise(async(resolve, reject)=>{
+
+        const tTransaction = await sequelize.transaction()
+        try {
+            // get the id of the last row in jobs .
             let lastId ;
+            let id ;
+            const time = new Date();
+
+            const counter =  await db.Jobs.findAll({
+                attributes :["id"],
+                order : [["id", "desc"]],
+                limit :1
+            }, {transaction : tTransaction} )
             lastId = await counter.length === 0 || await counter === undefined  ? lastId =0 : await counter[0].dataValues.id ;
-        await db.Jobs.create({
-                id: lastId + 1 ,
+            id = await lastId + 1 ;
+            // Write the notification in the redis temporary storage
+            await client.sendCommand(['XADD','user-'+req.params.user_id ,
+                '*',
+                'id', id ,
+                'user_id', req.params.user_id,
+                'full_name', req.body.full_name,
+                'phone_number',req.body.phone_number,
+                'location',req.body.location,
+                'time', time ,
+                'job_description', req.body.job_description
+            ])
+            // write the notification in the database
+            await db.Jobs.create({
+                id: id ,
                 id_user : req.params.user_id,
                 full_name : req.body.full_name,
                 phone_number : req.body.phone_number,
                 location : req.body.location,
                 job_description : req.body.job_description,
-            },{transaction : tThree})
-            return await lastId + 1 
-        }).then(async(id) =>{
-                await client.sendCommand(['XADD','user-'+req.params.user_id ,
-                 '*',
-                 'id', id ,
-                 'user_id', req.params.user_id,
-                 'full_name', req.body.full_name,
-                 'phone_number',req.body.phone_number,
-                 'location',req.body.location,
-                 'job_description', req.body.job_description
-                ])
-            }).then(()=>{
-                res.status(200).json({"message":"request has been sent successfully ."})
-            })
+                time : time
+            },{transaction : tTransaction})
 
-    } catch (error) {
-        res.status(500).json({"message": "an error has occured please send again the request ." +error})
-    }
-    
-}
+            await tTransaction.commit();
+            resolve('Success');
+            
+        } catch (error) {   
+            await tTransaction.rollback();
+            reject('failure')
+            console.error(error)         
+        }
+
+    })
+    .then((response)=>res.status(200).json({message : response}))
+    .catch((error)=>res.status(500).json({message : error}))
 
 
