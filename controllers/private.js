@@ -31,8 +31,7 @@ exports.checkNotifications = async (req, res, next )=>{
     })
 
     .then(data=>res.status(200).json(data))
-
-    .catch(err => console.error(err) )
+    .catch(err => res.status(500).json({error : 'An error has occured'}))
 }
 
 exports.updateNotifications = async (req, res, next )=>
@@ -77,3 +76,35 @@ exports.updateNotifications = async (req, res, next )=>
 
         }).then((data)=>res.status(200).json({message : data}))
           .catch((err)=>res.status(500).json({message : err}))
+
+exports.jobs = async (req, res, next)=>{
+    await db.Jobs.sync().then(async()=>{
+        return await db.Jobs.findAll({
+            where : {
+                id_user : req.session.passport.user,
+                seen : 1
+            }
+        })
+        .then(data => res.status(200).json(data))
+        .catch(err=> res.status(500).json({error : 'An error has occured'}))
+    })
+}
+
+exports.deleteJobs = async (req, res, next)=>{
+    await db.Jobs.sync().then(async()=>{
+        return await db.Jobs.destroy({
+            where : {
+                id_user : req.session.passport.user,
+                id : req.params.id
+            }
+        })
+        .then((data) => (
+            data === 0? 
+                res.status(404).json({message : 'Unkown notification'}) 
+                    :
+                res.status(200).json({message : 'Notification deleted successfuly'})
+            )
+        )
+        .catch( err =>res.status(500).json({error : 'An error has occured'}))
+    })
+}

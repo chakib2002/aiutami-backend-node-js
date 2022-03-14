@@ -16,7 +16,7 @@ const get_email = async (email)=>{
 exports.add_user = async (req, res, next)=>{
     const result = await get_email(req.body.email);
     if(result){
-        res.status(404).json({"message":"user already exists !"})
+        res.status(409).json({message :"user already exists"})
     }else{
         try {
             const hash = bcrypt.hashSync(req.body.password, 10);
@@ -65,12 +65,11 @@ exports.add_user = async (req, res, next)=>{
                     }, {transaction : tOne})
                 res.status(200).json({"message": "user signed up successfully ."})
             }else{
-                res.status(500).json({"message": "An error has occured please sign up again ."})
-                throw new Error()
+                res.status(500).json({error : 'An error has occured'})
             }
         })
         } catch (error) {
-            res.status(500).json({"message": "An error has occured please sign up again ."})
+            res.status(500).json({error : 'An error has occured'})
         }
     
     }
@@ -88,8 +87,6 @@ exports.logout =  (req, res, next) => {
 
 exports.login = (req,res) =>{
     if(req.session){
-        // fetch all the job posted for the specific user who has signed in .
-        // and return them with count to the user .
         res.status(200).json({"message": "you have logged in successfully ."})
     }else{
         res.status(401).json({"message": "Email / password combination is wrong please login again ."})

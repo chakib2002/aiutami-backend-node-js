@@ -4,10 +4,10 @@ const client = require ('../redis/redis_config.js');
 
 
 exports.fetch_seniorcare = async(req, res)=>{
-    const care_type = req.params.care_type.toString();
-    const location = req.params.location.toString();
-    const params = req.params
-    const array =Object.values(params)
+    const care_type =  req.params.care_type.toString();
+    const location =  req.params.location.toString();
+    const params =  req.params
+    const array = Object.values(params)
 
     for(let i =2; i<= 7; i++){
         if (array[i]=="true") {
@@ -17,8 +17,8 @@ exports.fetch_seniorcare = async(req, res)=>{
         }
     }
 
-    await db.User.sync().then(()=>{
-        return db.User.findAll({
+    await db.User.sync().then(async ()=>{
+        return await db.User.findAll({
             attributes: {exclude: ['hash'] }, where: {
                 care_type: care_type,
                 province :  location,
@@ -40,13 +40,13 @@ exports.fetch_seniorcare = async(req, res)=>{
     res.status(200).json(data)
 })
 
-.catch((err)=>console.log(err))}
+.catch((err)=>res.status(500).json({error : 'An error has occured'}))}
 
 exports.fetch_housekeeping = async (req, res)=>{
     const care_type = req.params.care_type.toString();
     const location = req.params.location.toString();
-    await db.User.sync().then(()=>{
-        return db.User.findAll({
+    await db.User.sync().then(async()=>{
+        return await db.User.findAll({
             attributes: {
                 exclude: ['hash'] 
             }, where: {
@@ -57,15 +57,14 @@ exports.fetch_housekeeping = async (req, res)=>{
     })
     .then((data)=> res.status(200).json(data))
     .catch((err)=> {
-        res.status(500).json({"error" : "Something went wrong please try again !"})
-        console.log(err)
+        res.status(500).json({error : 'An error has occured'})
     })
 }
 
 exports.fetch_tutoring = async(req, res)=>{
     const param = req.params ;
-    await db.User.sync().then(()=>{
-        return db.User.findAll({
+    await db.User.sync().then(async()=>{
+        return await db.User.findAll({
             attributes: {exclude: ['hash'] }, where: {
                 care_type: param.care_type,
                 province :  param.location,
@@ -83,7 +82,7 @@ exports.fetch_tutoring = async(req, res)=>{
     })
     .then((data)=>res.status(200).json(data))
     .catch((err)=>{
-        res.status(500).json({"error" : "Something went wrong please try again !"})
+        res.status(500).json({error : 'An error has occured'})
         console.log(err)
     })
 }
