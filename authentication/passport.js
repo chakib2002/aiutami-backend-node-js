@@ -35,7 +35,6 @@ var bCrypt = require('bcrypt');
                 return bCrypt.compareSync(password, userpass);
 
             }
-            console.log("logged to", email)
             Auth.findOne({
                 where: {
                     email: email

@@ -1,6 +1,7 @@
 const db = require('../models/model');
 const sequelize = require('../models/main');
 const bcrypt = require('bcrypt');
+const res = require('express/lib/response');
 
 
 const get_email = async (email)=>{
@@ -13,6 +14,24 @@ const get_email = async (email)=>{
         return await res ;
 }
 
+exports.user_exist = async (req, res, next)=>
+    new Promise(async (resolve, reject)=>{
+        const email = req.params.email;
+        try {
+            const result = await get_email(email);
+            if(result){
+                reject("user found")
+            }else {
+                resolve("user not found")
+            }            
+        } catch (error) {
+            reject('an error has occured')
+        }
+    }).then((response)=>res.status(200).json({message : response}))
+    .catch((response)=>res.status(304).json({message : response}))
+
+
+
 exports.add_user = async (req, res, next)=>{
     const result = await get_email(req.body.email);
     if(result){
@@ -20,6 +39,7 @@ exports.add_user = async (req, res, next)=>{
     }else{
         try {
             const hash = bcrypt.hashSync(req.body.password, 10);
+            console.log(req.body.availability)
 
         await sequelize.transaction(async (tOne)=>{
             const user = await db.User.create({
@@ -36,7 +56,7 @@ exports.add_user = async (req, res, next)=>{
                 price : req.body.price,
                 availability : req.body.availability
             }, {transaction : tOne});
-            if(req.body.care_type == 'seniorcare'){
+            if(req.body.care_type == 'Senior caregiver'){
                 await db.Seniorcare.create({
                     id_user : user.dataValues.id,
                     transportation : req.body.transportation,
@@ -46,16 +66,16 @@ exports.add_user = async (req, res, next)=>{
                     companionship : req.body.companionship,
                     specialized_care : req.body.specialized_care
                 }, {transaction : tOne})
-            res.status(200).json({"message": "user signed up successfully ."})
+            res.status(200).json({message: "user signed up successfully ."})
             
             }else if (req.body.care_type == "housekeeper"){
                 await db.Housekeeper.create({
                     id_user : user.dataValues.id
                 },{transaction : tOne})
 
-            res.status(200).json({"message": "user signed up successfully ."})
+            res.status(200).json({message: "user signed up successfully ."})
            
-            }else if (req.body.care_type =='tutor'){
+            }else if (req.body.care_type =='Tutor'){
                 await db.Tutors.create({
                         id_user : user.dataValues.id,
                         level : req.body.level,
@@ -63,13 +83,13 @@ exports.add_user = async (req, res, next)=>{
                         education : req.body.education,
                         subject : req.body.subject
                     }, {transaction : tOne})
-                res.status(200).json({"message": "user signed up successfully ."})
+                res.status(200).json({message: "user signed up successfully ."})
             }else{
                 res.status(500).json({error : 'An error has occured'})
             }
         })
         } catch (error) {
-            res.status(500).json({error : 'An error has occured'})
+            res.status(500).json({error : error})
         }
     
     }
@@ -80,15 +100,21 @@ exports.logout =  (req, res, next) => {
         if (err){ 
             throw err 
         }else{
-            res.status(200).json({"message" :"You have logged out successfully ."});
+            res.status(200).json({message :"You have logged out successfully ."});
         }
     });
 }
 
 exports.login = (req,res) =>{
-    if(req.session){
-        res.status(200).json({"message": "you have logged in successfully ."})
+    if(req.user){
+        res.status(200).json({
+            message: "you have logged in successfully .",
+            id : req.user.id,
+            first_name : req.user.first_name,
+            last_name : req.user.last_name,
+            link : req.user.link
+        })
     }else{
-        res.status(401).json({"message": "Email / password combination is wrong please login again ."})
+        res.status(401).json({message: "Email / password combination is wrong please login again ."})
     }
 }

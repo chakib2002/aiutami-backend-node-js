@@ -30,6 +30,10 @@ app.use(session({
 app.use(Passport.initialize());
 app.use(Passport.session());
 
+app.use((req,res,next) =>{
+    console.log(req.user)
+    next()
+ })
 
 app.get("/logout", controllers.logout);
 
@@ -37,5 +41,6 @@ app.post('/signup', controllers.add_user )
 
 app.post("/signin",Passport.authenticate('local-signin'),controllers.login);
 
+app.get("/isAuth", controllers.login)
 
 module.exports = app ; 
