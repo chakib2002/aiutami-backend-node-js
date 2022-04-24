@@ -8,8 +8,8 @@ app.use(require('../authorization/authorization').is_authorized);
 
 app.post("/checkNotifications", controllers.checkNotifications );
 app.post("/updateNotifications", controllers.updateNotifications) ;
-app.get("/requests", controllers.jobs);
-app.delete("/requests/:id", controllers.deleteJobs);
+app.get("/requests", controllers.getAllNotifications);
+app.delete("/requests/:id", controllers.deleteNotification);
 
 
 

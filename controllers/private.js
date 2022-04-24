@@ -77,7 +77,7 @@ exports.updateNotifications = async (req, res, next )=>
         }).then((data)=>res.status(200).json({message : data}))
           .catch((err)=>res.status(500).json({message : err}))
 
-exports.jobs = async (req, res, next)=>{
+exports.getAllNotifications = async (req, res, next)=>{
     await db.Jobs.sync().then(async()=>{
         return await db.Jobs.findAll({
             where : {
@@ -90,7 +90,7 @@ exports.jobs = async (req, res, next)=>{
     })
 }
 
-exports.deleteJobs = async (req, res, next)=>{
+exports.deleteNotification = async (req, res, next)=>{
     await db.Jobs.sync().then(async()=>{
         return await db.Jobs.destroy({
             where : {
