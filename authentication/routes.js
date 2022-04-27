@@ -30,10 +30,11 @@ app.use(session({
 app.use(Passport.initialize());
 app.use(Passport.session());
 
-app.use((req,res,next) =>{
-    console.log(req.user)
-    next()
- })
+// app.use((req,res,next) =>{
+//     console.log(req.user)
+//     console.log(req.isAuthenticated())
+//     next()
+//  })
 
 app.get("/logout", controllers.logout);
 

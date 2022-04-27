@@ -39,8 +39,6 @@ exports.add_user = async (req, res, next)=>{
     }else{
         try {
             const hash = bcrypt.hashSync(req.body.password, 10);
-            console.log(req.body.availability)
-
         await sequelize.transaction(async (tOne)=>{
             const user = await db.User.create({
                 first_name : req.body.first_name,
