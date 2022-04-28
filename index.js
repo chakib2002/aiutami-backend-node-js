@@ -13,6 +13,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
+
+
+
 app.use(cors({
   origin : "http://localhost:3000",
   methods : ["POST", "GET", "DELETE", "UPDATE"],
@@ -30,7 +33,7 @@ app.use(authentication_routes);
 app.use(public_routes);
 app.use(protected_routes)
 
-
+app.use(express.static("uploads"));
 
 // set port, listen for requests
 const PORT = 3001;
