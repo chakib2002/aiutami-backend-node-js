@@ -96,7 +96,7 @@ exports.add_user = async (req, res, next)=>{
 exports.logout =  (req, res, next) => {
     req.session.destroy(function (err) {
         if (err){ 
-            throw err 
+            res.sendStatus(500)
         }else{
             res.status(200).json({message :"You have logged out successfully ."});
         }

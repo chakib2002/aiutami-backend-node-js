@@ -29,6 +29,11 @@ class Resize {
         const image = await sharp(this.Image).resize(1080,760).jpeg().toFile(`${this.folder}/${filename}-standard.jpeg`);
         return image
     }
+
+    async resizeAndSaveSquarePicture (filename) {
+        const image = await sharp(this.Image).resize(1080,1080).jpeg().toFile(`${this.folder}/${filename}-square.jpeg`);
+        return image
+    }
     
     async saveFileNameToDB (user_id, filename) {
         await db.User.update(

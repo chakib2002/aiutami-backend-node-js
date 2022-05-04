@@ -141,4 +141,5 @@ exports.client_request = async (req, res, next)=>
     .then((response)=>res.status(200).json({message : response}))
     .catch((error)=>res.status(500).json({message : error}))
 
+exports.client_profile = async (req, res, next)=>{}
 

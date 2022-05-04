@@ -11,7 +11,8 @@ exports.processImage = async(req, res, next) =>{
     if(validation){
         const saveProfile = await uploadedImage.resizeAndSaveProfilePicture(filename);
         const saveStandard = await uploadedImage.resizeAndSaveStandardPicture(filename);
-        if(saveProfile && saveStandard){
+        const saveSquare = await uploadedImage.resizeAndSaveSquarePicture(filename)
+        if(saveProfile && saveStandard && saveSquare){
             const response = await uploadedImage.saveFileNameToDB(id, filename)
             await res.status(200).json({
                     message :"Image uploaded successfully",
