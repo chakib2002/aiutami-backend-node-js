@@ -141,5 +141,17 @@ exports.client_request = async (req, res, next)=>
     .then((response)=>res.status(200).json({message : response}))
     .catch((error)=>res.status(500).json({message : error}))
 
-exports.client_profile = async (req, res, next)=>{}
+exports.client_profile = async (req, res, next)=>{
+    const user_id = req.params.user_id;
+    await db.User.sync().then( async () => {
+        await db.User.findOne({
+            where : {
+                id : user_id
+            }
+        })
+        .then((data)=>res.status(200).json(data))
+        .catch((err)=>res.status(500).json(err))
+    })
+    
+}
 

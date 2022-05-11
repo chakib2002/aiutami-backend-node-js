@@ -61,7 +61,7 @@ const User = sequelize.define('Users',{
         allowNull : false
     },
     availability : {
-        type :  Sequelize.DataTypes.JSON,
+        type :  Sequelize.DataTypes.STRING,
         allowNull : false,
     },
     price : {
