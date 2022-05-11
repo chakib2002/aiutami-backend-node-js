@@ -147,6 +147,9 @@ exports.client_profile = async (req, res, next)=>{
         await db.User.findOne({
             where : {
                 id : user_id
+            },
+            attributes: {
+                exclude : ['hash']
             }
         })
         .then((data)=>res.status(200).json(data))
