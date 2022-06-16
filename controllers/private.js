@@ -1,7 +1,9 @@
 const client = require ('../redis/redis_config.js');
 const db = require('../models/model');
 
-exports.checkNotifications = async (req, res, next )=>{
+
+// look up for new notifications in redis store
+exports.checkForNewNotifications = async (req, res, next )=>{
     const user_id = await req.session.passport.user;
     const ids = req.body.ids;
     await client.EXISTS('user-'+user_id)
@@ -34,7 +36,8 @@ exports.checkNotifications = async (req, res, next )=>{
     .catch(err => res.status(500).json({error : 'An error has occured'}))
 }
 
-exports.updateNotifications = async (req, res, next )=>
+// delete the notification from the redis store and update the "new" column of the jobs table in the db 
+exports.DeleteNotificationsFromRedisStore = async (req, res, next )=>
     new Promise(async (resolve, reject)=>{    
         const user_id = req.session.passport.user;
         const ids = req.body.ids; 
@@ -62,8 +65,9 @@ exports.updateNotifications = async (req, res, next )=>
                     await client.XDEL('user-'+user_id, element)
                 })
 
-                await db.Jobs.update({seen : 1}, {
+                await db.Jobs.update({new : 0}, {
                     where : {
+                        id_user : req.session.passport.user,
                         id : ids
                     }
                 })
@@ -77,12 +81,13 @@ exports.updateNotifications = async (req, res, next )=>
         }).then((data)=>res.status(200).json({message : data}))
           .catch((err)=>res.status(500).json({message : err}))
 
-exports.getAllNotifications = async (req, res, next)=>{
+// get all viewed notifications (not new notifications)
+exports.fetchNotifications = async (req, res, next)=>{
     await db.Jobs.sync().then(async()=>{
         return await db.Jobs.findAll({
             where : {
                 id_user : req.session.passport.user,
-                seen : 1
+                new : 0
             }
         })
         .then(data => res.status(200).json(data))
@@ -90,6 +95,21 @@ exports.getAllNotifications = async (req, res, next)=>{
     })
 }
 
+// get all accepted notifications 
+exports.fetchAcceptedJobRequestNotifications = async (req, res, next)=>{
+    await db.Jobs.sync().then(async()=>{
+        return await db.Jobs.findAll({
+            where : {
+                id_user : req.session.passport.user,
+                accepted : 1
+            }
+        })
+        .then(data => res.status(200).json(data))
+        .catch(err=> res.status(500).json({error : 'An error has occured'}))
+    })
+}
+
+// delete a notification
 exports.deleteNotification = async (req, res, next)=>{
     await db.Jobs.sync().then(async()=>{
         return await db.Jobs.destroy({
@@ -106,5 +126,39 @@ exports.deleteNotification = async (req, res, next)=>{
             )
         )
         .catch( err =>res.status(500).json({error : 'An error has occured'}))
+    })
+}
+
+// update seen 
+exports.updateSeen = async (req, res, next)=>{
+    const id = req.params.id
+    await db.Jobs.sync().then(async()=>{
+        return await db.Jobs.update({
+            seen : 1
+        },{
+            where : {
+                id : id,
+                id_user : req.session.passport.user,
+            }
+        })
+        .then(data => res.status(200).json(data))
+        .catch(err=> res.status(500).json({error : 'An error has occured'}))
+    })
+}
+
+// update accepted
+exports.updateAccepted = async (req, res, next)=>{
+    const id = req.params.id
+    await db.Jobs.sync().then(async()=>{
+        return await db.Jobs.update({
+            accepted : 1
+        },{
+            where : {
+                id : id,
+                id_user : req.session.passport.user,
+            }
+        })
+        .then(data => res.status(200).json(data))
+        .catch(err=> res.status(500).json({error : 'An error has occured'}))
     })
 }

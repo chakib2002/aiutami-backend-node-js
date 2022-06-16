@@ -7,11 +7,20 @@ const app = express();
 
 app.use(require('../authorization/authorization').is_authorized);
 
-
-app.post("/checkNotifications", controllers.checkNotifications );
-app.post("/updateNotifications", controllers.updateNotifications) ;
-app.get("/requests", controllers.getAllNotifications);
-app.delete("/requests/:id", controllers.deleteNotification);
+//look up for new notifications .
+app.post("/checkForNewNotifications", controllers.checkForNewNotifications );
+//delete viewed notification from redis store and update the "new" column in the db .
+app.delete("/DeleteNotificationsFromRedisStore", controllers.DeleteNotificationsFromRedisStore) ; 
+// get all recieved notifications .
+app.get("/fetchNotifications", controllers.fetchNotifications);
+// get all accepted jobs
+app.get("/fetchAcceptedJobRequestNotifications", controllers.fetchAcceptedJobRequestNotifications);
+// delete a specific notification
+app.delete("/deleteNotification/:id", controllers.deleteNotification);
+// update accepted
+app.patch("/updateAccepted/:id", controllers.updateAccepted)
+// update seen
+app.patch("/updateSeen/:id", controllers.updateSeen)
 
 
 

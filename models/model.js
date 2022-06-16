@@ -130,6 +130,16 @@ const Jobs = sequelize.define('Jobs',{
         type : Sequelize.DataTypes.BOOLEAN,
         defaultValue : false,
         allowNull : false
+    },
+    accepted : {
+        type :Sequelize.DataTypes.BOOLEAN,
+        defaultValue : false,
+        allowNull : false
+    },
+    new : {
+        type :Sequelize.DataTypes.BOOLEAN,
+        defaultValue : true,
+        allowNull : false
     }
 },{
     freezeTableName : true,
