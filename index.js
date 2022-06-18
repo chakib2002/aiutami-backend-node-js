@@ -18,7 +18,7 @@ app.use(express.static("uploads"));
 
 app.use(cors({
   origin : "http://localhost:3000",
-  methods : ["POST", "GET", "DELETE", "UPDATE"],
+  methods : ["POST", "GET", "DELETE", "PATCH"],
   credentials : true
 }))
 
