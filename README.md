@@ -26,6 +26,11 @@ Aiutami is a platform that connects Academic Tutors, Housekeepers and Senior car
 
 ### Notification system
 
+**Notification system architechture**
+
+![notification design system](https://user-images.githubusercontent.com/78510402/177719524-94d26245-1024-4dbe-ba3a-ec17afb6025b.PNG)
+
+
 **How the notification system is implemented ?**
 Whenever a client hires a tutor, a housekeeper or a senior caregiver, a notification get stored in the database and redis temporarily storage .
 
@@ -57,9 +62,99 @@ example :
       dummy text ever since the 1500s, "
  ```
 
- 
- ![notification design system](https://user-images.githubusercontent.com/78510402/177697579-b3509542-bf68-40bc-b380-4d8287e540c8.PNG)
+After the user is authenticated the client-side fetches all his notifications from the database **where the New column is equal to false** which means that the notification has already being recieved by the user and he has already checked it out. 
+
+**code**
+```node
+// you will find the code in "./routes/protected" of this repository   
+
+app.get("/fetchNotifications", controllers.fetchNotifications);
+
+```
+
+```node
+// you will find the code in "./controllers/private"  of this repository  
+
+exports.fetchNotifications = async (req, res, next)=>{
+    await db.Jobs.sync().then(async()=>{
+        return await db.Jobs.findAll({
+            where : {
+                id_user : req.session.passport.user,
+                new : 0
+            }
+        })
+        .then(data => res.status(200).json(data))
+        .catch(err=> res.status(500).json({error : 'An error has occured'}))
+    })
+}
+
+```
+
+after that, each 3 seconds while the user is authenticated a request get sent to the **redis temporarily storage** in order to look up for new notifications, if a new notification is found, it gets send back to the client-side .
+
+   > - This process doesn't duplicate notifications on the client-side, because each time we send a request to redis temporarily storage, we send with it an array of ids of all the notifications on the client-side. this way we have the ability to check if the a notification has already been recieved on the client-side or not.
+
+**code**
+
+```node
+
+// you will find the code in "./routes/protected" of this repository  
+
+app.post("/checkForNewNotifications", controllers.checkForNewNotifications );
+
+```
+
+```node
+
+// you will find the code in "./controllers/private"  of this repository  
+
+exports.checkForNewNotifications = async (req, res, next )=>{
+    const user_id = await req.session.passport.user;
+    const ids = req.body.ids;
+    await client.EXISTS('user-'+user_id)
+    .then(async (existence) =>{
+        if( existence === 1){
+
+            const data = await client.XRANGE('user-'+user_id, '-','+')
+            const result = JSON.stringify(data)
+            const response = await JSON.parse(result)
+
+            const processedResponse =await response.filter(element => {
+                const exists = !!ids.find(current =>{
+                    return current == element.message.id
+                })
+
+                if(exists === false){
+                    return element
+                }
+
+            })
+            
+            return await processedResponse ;
+
+        }else{
+            next();
+        }
+    })
+
+    .then(data=>res.status(200).json(data))
+    .catch(err => res.status(500).json({error : 'An error has occured'}))
+}
+
+```
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+   
+   
