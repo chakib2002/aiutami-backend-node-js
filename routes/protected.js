@@ -1,6 +1,8 @@
 
 const controllers=require('../controllers/private');
 const express = require('express');
+const {upload} = require('../image_processing/uploadMiddleware');
+const {processImage} = require('../image_processing/controller');
 
 const app = express();
 
@@ -18,9 +20,11 @@ app.get("/fetchAcceptedJobRequestNotifications", controllers.fetchAcceptedJobReq
 // delete a specific notification
 app.delete("/deleteNotification/:id", controllers.deleteNotification);
 // update accepted
-app.patch("/updateAccepted/:id", controllers.updateAccepted)
+app.patch("/updateAccepted/:id", controllers.updateAccepted);
 // update seen
-app.patch("/updateSeen/:id", controllers.updateSeen)
+app.patch("/updateSeen/:id", controllers.updateSeen);
+// upload profile picture 
+app.post("/upload", upload.single('image'), processImage ) ;
 
 
 

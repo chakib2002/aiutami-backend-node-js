@@ -3,8 +3,9 @@ const Resize = require('./main')
 
 exports.processImage = async(req, res, next) =>{
     try{
+    const buffer = await req.file? req.file.buffer : null
     const id = await req.user.id;
-    const uploadedImage = new Resize(req.file.buffer, 'uploads');
+    const uploadedImage = new Resize( await buffer , 'uploads');
     const filename = uploadedImage.generateFilename();
     const metadata = await sharp(uploadedImage.Image).metadata();
     const validation = uploadedImage.imageValidation(metadata);
@@ -24,6 +25,6 @@ exports.processImage = async(req, res, next) =>{
 
         } 
     }catch (error) {
-        res.status(500).json({Error : "An error has occured"})
+        res.status(500).json({Error : "An error has occured"+ error})
     }
 }

@@ -1,7 +1,5 @@
 const express = require('express');
 const controller = require('../controllers/public');
-const {upload} = require('../image_processing/uploadMiddleware');
-const {processImage} = require('../image_processing/controller')
 const {user_exist} = require('../authentication/controllers');
 
 const route = express.Router() ;
@@ -14,5 +12,5 @@ route.get("/result/:care_type/:location/",controller.fetch_housekeeping); // hou
 route.get("/result/:user_id", controller.client_profile) // get info of a specific client
 route.post("/result/:user_id", controller.client_request) // send a request to a specific caregiver or tutor .
 route.get("/userExistance/:email", user_exist) //check if the user already exists in the db 
-route.post("/upload", upload.single('image'), processImage ) // fetch Images 
+
 module.exports = route;

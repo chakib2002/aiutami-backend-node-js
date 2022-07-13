@@ -7,14 +7,10 @@ const protected_routes = require('./routes/protected');
 const cors = require('cors');
 require('dotenv').config()
 
-
 app.use(express.json());
-// parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
-
 app.use(express.static("uploads"));
-
 
 app.use(cors({
   origin : "http://localhost:3000",
@@ -22,21 +18,15 @@ app.use(cors({
   credentials : true
 }))
 
-
-// simple route
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to aiutami application." });
-});
-
-
+app.get('/', (req, res, next)=>{
+  res.send("Hello world")
+})
 app.use(authentication_routes);
 app.use(public_routes);
 app.use(protected_routes)
 
-
-
 // set port, listen for requests
-const PORT = 3001;
+const PORT = 8081;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
